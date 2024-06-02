@@ -3,7 +3,7 @@
  * @file ailia_tokenizer.h
  * @brief ailia Tokenizer NLP TOKENIZER ライブラリ
  * @copyright AXELL CORPORATION, ax Inc.
- * @date 2023/04/20
+ * @date 2024/05/31
  */
 
 #ifndef INCLUDED_AILIA_TOKENIZER
@@ -463,7 +463,7 @@ int AILIA_API ailiaTokenizerUtf32ToUtf8(char* utf8, unsigned int* processed_byte
 
 #ifdef UNICODE
 #define ailiaTokenizerOpenModelFile ailiaTokenizerOpenModelFileW
-#define ailiaTokenizerOpenDictionaryFilW ailiaTokenizerOpenDictionaryFileW
+#define ailiaTokenizerOpenDictionaryFile ailiaTokenizerOpenDictionaryFileW
 #define ailiaTokenizerOpenVocabFile ailiaTokenizerOpenVocabFileW
 #define ailiaTokenizerOpenMergeFile ailiaTokenizerOpenMergeFileW
 #else
