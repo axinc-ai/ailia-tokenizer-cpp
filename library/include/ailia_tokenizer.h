@@ -132,6 +132,28 @@ extern "C" {
  */
 #define AILIA_TOKENIZER_TYPE_ROBERTA (7)
 
+/**
+ * \~japanese
+ * @def AILIA_TOKENIZER_TYPE_BERT_UNCASED
+ * @brief  BERT UNCASED向けのトークナイザ
+ *
+ * \~english
+ * @def AILIA_TOKENIZER_TYPE_BERT_UNCASED
+ * @brief Tokenizer for BERT UNCASED
+ */
+#define AILIA_TOKENIZER_TYPE_BERT_UNCASED (8)
+
+/**
+ * \~japanese
+ * @def AILIA_TOKENIZER_TYPE_BERT_CASED
+ * @brief  BERT CASED向けのトークナイザ
+ *
+ * \~english
+ * @def AILIA_TOKENIZER_TYPE_BERT_CASED
+ * @brief Tokenizer for BERT CASED
+ */
+#define AILIA_TOKENIZER_TYPE_BERT_CASED (9)
+
 /****************************************************************
  * フラグ定義
  **/
@@ -351,7 +373,8 @@ int AILIA_API ailiaTokenizerGetTokens(struct AILIATokenizer* net, int* tokens, u
  * @return
  *   成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
  * @details
- *   認識した結果はailiaTokenizerGetText APIで取得します。
+ *   デコードした結果はailiaTokenizerGetText APIで取得します。
+ *   skip_special_tokens=Trueと同様に、Special Tokenは出力しません。
  *
  * \~english
  * @brief Perform encode
@@ -362,6 +385,7 @@ int AILIA_API ailiaTokenizerGetTokens(struct AILIATokenizer* net, int* tokens, u
  *   If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
  * @details
  *   Get the decoded result with ailiaTokenizerGetText API.
+ *   Similarly to skip_special_tokens=True, special tokens will not be output.
  */
 int AILIA_API
 ailiaTokenizerDecode(struct AILIATokenizer* net, const int *tokens, unsigned int token_count);
