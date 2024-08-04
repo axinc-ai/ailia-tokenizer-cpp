@@ -3,7 +3,7 @@
  * @file ailia_tokenizer.h
  * @brief ailia Tokenizer NLP TOKENIZER ライブラリ
  * @copyright AXELL CORPORATION, ax Inc.
- * @date 2024/05/31
+ * @date 2024/07/26
  */
 
 #ifndef INCLUDED_AILIA_TOKENIZER
@@ -134,25 +134,36 @@ extern "C" {
 
 /**
  * \~japanese
- * @def AILIA_TOKENIZER_TYPE_BERT_UNCASED
- * @brief  BERT UNCASED向けのトークナイザ
+ * @def AILIA_TOKENIZER_TYPE_BERT
+ * @brief  BERT向けのトークナイザ
  *
  * \~english
- * @def AILIA_TOKENIZER_TYPE_BERT_UNCASED
- * @brief Tokenizer for BERT UNCASED
+ * @def AILIA_TOKENIZER_TYPE_BERT
+ * @brief Tokenizer for BERT
  */
-#define AILIA_TOKENIZER_TYPE_BERT_UNCASED (8)
+#define AILIA_TOKENIZER_TYPE_BERT (8)
 
 /**
  * \~japanese
- * @def AILIA_TOKENIZER_TYPE_BERT_CASED
- * @brief  BERT CASED向けのトークナイザ
+ * @def AILIA_TOKENIZER_TYPE_GPT2
+ * @brief  GPT2向けのトークナイザ
  *
  * \~english
- * @def AILIA_TOKENIZER_TYPE_BERT_CASED
- * @brief Tokenizer for BERT CASED
+ * @def AILIA_TOKENIZER_TYPE_GPT2
+ * @brief Tokenizer for GPT2
  */
-#define AILIA_TOKENIZER_TYPE_BERT_CASED (9)
+#define AILIA_TOKENIZER_TYPE_GPT2 (9)
+
+/**
+ * \~japanese
+ * @def AILIA_TOKENIZER_TYPE_LLAMA
+ * @brief  LLAMA向けのトークナイザ
+ *
+ * \~english
+ * @def AILIA_TOKENIZER_TYPE_LLAMA
+ * @brief Tokenizer for LLAMA
+ */
+#define AILIA_TOKENIZER_TYPE_LLAMA (10)
 
 /****************************************************************
  * フラグ定義
@@ -265,7 +276,7 @@ int AILIA_API ailiaTokenizerOpenDictionaryFileW(struct AILIATokenizer* net, cons
  * @return
  *   成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
  * @details
- *   単語ファイルを読み込みます。AILIA_TOKENIZER_TYPE_BERT_JAPANESE_XXXの場合のみ必要です。
+ *   単語ファイル (ROBERTAとWHISPERとGPT2はjson、それ以外はtxt) を読み込みます。
  *
  * \~english
  * @brief Open vocab file.
@@ -274,7 +285,7 @@ int AILIA_API ailiaTokenizerOpenDictionaryFileW(struct AILIATokenizer* net, cons
  * @return
  *   If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
  * @details
- *   Open a vocab file. This API only requires for AILIA_TOKENIZER_TYPE_BERT_JAPANESE_XXX.
+ *   Open a vocab file (json for ROBERTA or WHISPER or GPT2, txt for others).
  */
 int AILIA_API ailiaTokenizerOpenVocabFileA(struct AILIATokenizer* net, const char *path);
 int AILIA_API ailiaTokenizerOpenVocabFileW(struct AILIATokenizer* net, const wchar_t *path);
@@ -287,7 +298,7 @@ int AILIA_API ailiaTokenizerOpenVocabFileW(struct AILIATokenizer* net, const wch
  * @return
  *   成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
  * @details
- *   マージファイルを読み込みます。AILIA_TOKENIZER_TYPE_ROBERTAの場合のみ必要です。
+ *   マージファイル (txt) を読み込みます。AILIA_TOKENIZER_TYPE_ROBERTAもしくはAILIA_TOKENIZER_TYPE_WHISPERもしくはAILIA_TOKENIZER_TYPE_GPT2の場合のみ有効です。
  *
  * \~english
  * @brief Open merges file.
@@ -296,10 +307,54 @@ int AILIA_API ailiaTokenizerOpenVocabFileW(struct AILIATokenizer* net, const wch
  * @return
  *   If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
  * @details
- *   Open a vocab file. This API only requires for AILIA_TOKENIZER_TYPE_ROBERTA.
+ *   Open a merge file (txt). This API only requires for AILIA_TOKENIZER_TYPE_ROBERTA or AILIA_TOKENIZER_TYPE_WHISPER or AILIA_TOKENIZER_TYPE_GPT2.
  */
 int AILIA_API ailiaTokenizerOpenMergeFileA(struct AILIATokenizer* net, const char *path);
 int AILIA_API ailiaTokenizerOpenMergeFileW(struct AILIATokenizer* net, const wchar_t *path);
+
+/**
+ * \~japanese
+ * @brief 追加トークンファイルを読み込みます。
+ * @param net トークナイザオブジェクトポインタへのポインタ
+ * @param path スペシャルトークンファイルのパス
+ * @return
+ *   成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
+ * @details
+ *   追加トークンファイル (json) を読み込みます。AILIA_TOKENIZER_TYPE_WHISPERの場合のみ有効です。
+ *
+ * \~english
+ * @brief Open added tokens file.
+ * @param net A pointer to the tokenizer instance pointer
+ * @param path Path for special token file
+ * @return
+ *   If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
+ * @details
+ *   Open a added tokens file (json). This API only requires for AILIA_TOKENIZER_TYPE_WHISPER.
+ */
+int AILIA_API ailiaTokenizerOpenAddedTokensFileA(struct AILIATokenizer* net, const char *path);
+int AILIA_API ailiaTokenizerOpenAddedTokensFileW(struct AILIATokenizer* net, const wchar_t *path);
+
+/**
+ * \~japanese
+ * @brief コンフィグファイルを読み込みます。
+ * @param net トークナイザオブジェクトポインタへのポインタ
+ * @param path コンフィグファイルのパス
+ * @return
+ *   成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
+ * @details
+ *   トークナイザコンフィグファイル (json) を読み込みます。AILIA_TOKENIZER_TYPE_BERTの場合のみ有効です。
+ *
+ * \~english
+ * @brief Open tokenizer config file.
+ * @param net A pointer to the tokenizer instance pointer
+ * @param path Path for config file
+ * @return
+ *   If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
+ * @details
+ *   Open a tokenizer config file (json). This API only requires for AILIA_TOKENIZER_TYPE_BERT.
+ */
+int AILIA_API ailiaTokenizerOpenTokenizerConfigFileA(struct AILIATokenizer* net, const char *path);
+int AILIA_API ailiaTokenizerOpenTokenizerConfigFileW(struct AILIATokenizer* net, const wchar_t *path);
 
 /**
  * \~japanese
@@ -310,6 +365,7 @@ int AILIA_API ailiaTokenizerOpenMergeFileW(struct AILIATokenizer* net, const wch
  *   成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
  * @details
  *   認識した結果はailiaTokenizerGetTokens APIで取得します。
+ *   split_special_tokens=Trueと同様に、Special Tokenは分割して文字列として扱われます。
  *
  * \~english
  * @brief Perform encode
@@ -319,9 +375,34 @@ int AILIA_API ailiaTokenizerOpenMergeFileW(struct AILIATokenizer* net, const wch
  *   If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
  * @details
  *   Get the encoded result with ailiaTokenizerGetTokens API.
+ *   Just like with split_special_tokens=True, Special Tokens are treated as strings by splitting them.
  */
 int AILIA_API
 ailiaTokenizerEncode(struct AILIATokenizer* net, const char *utf8);
+
+/**
+ * \~japanese
+ * @brief スペシャルトークンを含んだエンコードを行います。
+ * @param net トークナイザオブジェクトポインタ
+ * @param text エンコードするテキスト(UTF8)
+ * @return
+ *   成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
+ * @details
+ *   認識した結果はailiaTokenizerGetTokens APIで取得します。
+ *   split_special_tokens=Falseと同様に、Special Tokenを出力します。
+ *
+ * \~english
+ * @brief Perform encode with special tokens
+ * @param net A tokenizer instance pointer
+ * @param text Text for encode (UTF8)
+ * @return
+ *   If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
+ * @details
+ *   Get the encoded result with ailiaTokenizerGetTokens API.
+ *   Similarly to split_special_tokens=False, special tokens will be output.
+ */
+int AILIA_API
+ailiaTokenizerEncodeWithSpecialTokens(struct AILIATokenizer* net, const char *utf8);
 
 /**
  * \~japanese
@@ -366,6 +447,88 @@ int AILIA_API ailiaTokenizerGetTokens(struct AILIATokenizer* net, int* tokens, u
 
 /**
  * \~japanese
+ * @brief ワードIDを取得します。
+ * @param net   トークナイザオブジェクトポインタ
+ * @param word_ids ワードID
+ * @param count  格納先トークン数
+ * @param 
+ * @return
+ *   成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
+ * @details
+ *   ailiaTokenizerEncode() を一度も実行していない場合は \ref AILIA_STATUS_INVALID_STATE が返ります。
+ *   AILIA_TOKENIZER_TYPE_ROBERTAとAILIA_TOKENIZER_TYPE_BERTの場合のみ有効です。
+ *
+ * \~english
+ * @brief Gets the word ID.
+ * @param net   A tokenizer instance pointer
+ * @param word_ids Word ID
+ * @param count  Token count
+ * @return
+ *   If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
+ * @details
+ *   If  ailiaTokenizerEncode()  is not run at all, the function returns  \ref AILIA_STATUS_INVALID_STATE .
+ *   This is valid only for AILIA_TOKENIZER_TYPE_ROBERTA and AILIA_TOKENIZER_TYPE_BERT.
+ */
+int AILIA_API ailiaTokenizerGetWordIDs(struct AILIATokenizer* net, int* word_ids, unsigned int count);
+
+/**
+ * \~japanese
+ * @brief 開始文字位置を取得します。
+ * @param net   トークナイザオブジェクトポインタ
+ * @param char_starts 開始文字位置
+ * @param count  格納先トークン数
+ * @param 
+ * @return
+ *   成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
+ * @details
+ *   ailiaTokenizerEncode() を一度も実行していない場合は \ref AILIA_STATUS_INVALID_STATE が返ります。
+ *   AILIA_TOKENIZER_TYPE_ROBERTAとAILIA_TOKENIZER_TYPE_BERTの場合のみ有効です。
+ *   各トークンに対応するUTF32単位での開始文字位置が返ります。
+ *
+ * \~english
+ * @brief Gets the Char start positions.
+ * @param net   A tokenizer instance pointer
+ * @param char_starts Character start position
+ * @param count  Token count
+ * @return
+ *   If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
+ * @details
+ *   If  ailiaTokenizerEncode()  is not run at all, the function returns  \ref AILIA_STATUS_INVALID_STATE .
+ *   This is valid only for AILIA_TOKENIZER_TYPE_ROBERTA and AILIA_TOKENIZER_TYPE_BERT.
+ *   The character start positions in UTF-32 units corresponding to each token are returned.
+ */
+int AILIA_API ailiaTokenizerGetCharStarts(struct AILIATokenizer* net, int* char_starts, unsigned int count);
+
+/**
+ * \~japanese
+ * @brief 終了文字位置を取得します。
+ * @param net   トークナイザオブジェクトポインタ
+ * @param char_ends 終了文字位置
+ * @param count  格納先トークン数
+ * @param 
+ * @return
+ *   成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
+ * @details
+ *   ailiaTokenizerEncode() を一度も実行していない場合は \ref AILIA_STATUS_INVALID_STATE が返ります。
+ *   AILIA_TOKENIZER_TYPE_ROBERTAとAILIA_TOKENIZER_TYPE_BERTの場合のみ有効です。
+ *   各トークンに対応するUTF32単位での終了文字位置が返ります。
+ *
+ * \~english
+ * @brief Gets the Char end positions.
+ * @param net   A tokenizer instance pointer
+ * @param char_ends Char end position
+ * @param count  Token count
+ * @return
+ *   If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
+ * @details
+ *   If  ailiaTokenizerEncode()  is not run at all, the function returns  \ref AILIA_STATUS_INVALID_STATE .
+ *   This is valid only for AILIA_TOKENIZER_TYPE_ROBERTA and AILIA_TOKENIZER_TYPE_BERT.
+ *   The character end positions in UTF-32 units corresponding to each token are returned.
+ */
+int AILIA_API ailiaTokenizerGetCharEnds(struct AILIATokenizer* net, int* char_ends, unsigned int count);
+
+/**
+ * \~japanese
  * @brief デコードを行います。
  * @param net トークナイザオブジェクトポインタ
  * @param tokens デコードするトークン
@@ -377,7 +540,7 @@ int AILIA_API ailiaTokenizerGetTokens(struct AILIATokenizer* net, int* tokens, u
  *   skip_special_tokens=Trueと同様に、Special Tokenは出力しません。
  *
  * \~english
- * @brief Perform encode
+ * @brief Perform decode
  * @param net A tokenizer instance pointer
  * @param tokens Tokens for decode
  * @param token_count The number of tokens
@@ -389,6 +552,32 @@ int AILIA_API ailiaTokenizerGetTokens(struct AILIATokenizer* net, int* tokens, u
  */
 int AILIA_API
 ailiaTokenizerDecode(struct AILIATokenizer* net, const int *tokens, unsigned int token_count);
+
+/**
+ * \~japanese
+ * @brief スペシャルトークンを含んだデコードを行います。
+ * @param net トークナイザオブジェクトポインタ
+ * @param tokens デコードするトークン
+ * @param token_count トークンの数
+ * @return
+ *   成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
+ * @details
+ *   デコードした結果はailiaTokenizerGetText APIで取得します。
+ *   skip_special_tokens=Falseと同様に、Special Tokenを出力します。
+ *
+ * \~english
+ * @brief Perform decode with special tokens
+ * @param net A tokenizer instance pointer
+ * @param tokens Tokens for decode
+ * @param token_count The number of tokens
+ * @return
+ *   If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
+ * @details
+ *   Get the decoded result with ailiaTokenizerGetText API.
+ *   Similarly to skip_special_tokens=False, special tokens will be output.
+ */
+int AILIA_API
+ailiaTokenizerDecodeWithSpecialTokens(struct AILIATokenizer* net, const int *tokens, unsigned int token_count);
 
 /**
  * \~japanese
@@ -429,6 +618,49 @@ int AILIA_API ailiaTokenizerGetTextLength(struct AILIATokenizer* net, unsigned i
  *   If  ailiaTokenizerDecode()  is not run at all, the function returns  \ref AILIA_STATUS_INVALID_STATE .
  */
 int AILIA_API ailiaTokenizerGetText(struct AILIATokenizer* net, char* text, unsigned int len);
+
+/**
+ * \~japanese
+ * @brief Vocabの数を取得します。
+ * @param net   トークナイザオブジェクトポインタ
+ * @param size  Vocabの要素数
+ * @return
+ *   成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
+ *
+ * \~english
+ * @brief Gets the size of vocab. (Include null)
+ * @param net   A tokenizer instance pointer
+ * @param size  The size of vocab
+ * @return
+ *   If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
+ */
+int AILIA_API ailiaTokenizerGetVocabSize(struct AILIATokenizer* net, unsigned int* size);
+
+/**
+ * \~japanese
+ * @brief Vocabの取得を行います。
+ * @param net トークナイザオブジェクトポインタ
+ * @param token トークン
+ * @param vocab Vocabのテキスト(UTF8)
+ * @return
+ *   成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
+ * @details
+ *   vocabを解放する必要はありません。
+ *   vocabの有効期間は次にailiaTokenizer APIを呼び出すまでになります。
+ *
+ * \~english
+ * @brief Perform encode
+ * @param net A tokenizer instance pointer
+ * @param token Token
+ * @param text Text of vocab (UTF8)
+ * @return
+ *   If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
+ * @details
+ *   There is no need to release the vocab.
+ *   The validity period of the vocab will last until the next time the ailiaTokenizer API is called.
+ */
+int AILIA_API
+ailiaTokenizerGetVocab(struct AILIATokenizer* net, int token, const char **vocab);
 
 /**
  * \~japanese
@@ -490,11 +722,15 @@ int AILIA_API ailiaTokenizerUtf32ToUtf8(char* utf8, unsigned int* processed_byte
 #define ailiaTokenizerOpenDictionaryFile ailiaTokenizerOpenDictionaryFileW
 #define ailiaTokenizerOpenVocabFile ailiaTokenizerOpenVocabFileW
 #define ailiaTokenizerOpenMergeFile ailiaTokenizerOpenMergeFileW
+#define ailiaTokenizerOpenAddedTokensFile ailiaTokenizerOpenAddedTokensFileW
+#define ailiaTokenizerOpenConfigFile ailiaTokenizerOpenConfigFileW
 #else
 #define ailiaTokenizerOpenModelFile ailiaTokenizerOpenModelFileA
 #define ailiaTokenizerOpenDictionaryFile ailiaTokenizerOpenDictionaryFileA
 #define ailiaTokenizerOpenVocabFile ailiaTokenizerOpenVocabFileA
 #define ailiaTokenizerOpenMergeFile ailiaTokenizerOpenMergeFileA
+#define ailiaTokenizerOpenAddedTokensFile ailiaTokenizerOpenAddedTokensFileA
+#define ailiaTokenizerOpenTokenizerConfigFile ailiaTokenizerOpenTokenizerConfigFileA
 #endif
 
 #ifdef __cplusplus
