@@ -664,6 +664,30 @@ ailiaTokenizerGetVocab(struct AILIATokenizer* net, int token, const char **vocab
 
 /**
  * \~japanese
+ * @brief SpecialTokenの追加を行います。
+ * @param net トークナイザオブジェクトポインタ
+ * @param tokens トークン(UTF8)
+ * @param count 追加する個数
+ * @return
+ *   成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
+ * @details
+ *   AILIA_TOKENIZER_TYPE_ROBERTAの場合のみ有効です。
+ *
+ * \~english
+ * @brief Add SpecialToken
+ * @param net A tokenizer instance pointer
+ * @param tokens Token(UTF8)
+ * @param count The number of tokens
+ * @return
+ *   If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
+ * @details
+ *   This is valid only for AILIA_TOKENIZER_TYPE_ROBERTA and AILIA_TOKENIZER_TYPE_ROBERTA.
+ */
+int AILIA_API
+ailiaTokenizerAddSpecialTokens(struct AILIATokenizer* net, const char **tokens, unsigned int count);
+
+/**
+ * \~japanese
  * @brief トークナイズオブジェクトを破棄します。
  * @param net トークナイザオブジェクトポインタ
  *
