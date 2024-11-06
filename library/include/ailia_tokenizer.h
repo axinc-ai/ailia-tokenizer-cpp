@@ -671,7 +671,7 @@ ailiaTokenizerGetVocab(struct AILIATokenizer* net, int token, const char **vocab
  * @return
  *   成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
  * @details
- *   AILIA_TOKENIZER_TYPE_ROBERTAの場合のみ有効です。
+ *   AILIA_TOKENIZER_TYPE_ROBERTAおよびAILIA_TOKENIZER_TYPE_GPT2の場合のみ有効です。
  *
  * \~english
  * @brief Add SpecialToken
@@ -681,7 +681,7 @@ ailiaTokenizerGetVocab(struct AILIATokenizer* net, int token, const char **vocab
  * @return
  *   If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
  * @details
- *   This is valid only for AILIA_TOKENIZER_TYPE_ROBERTA and AILIA_TOKENIZER_TYPE_ROBERTA.
+ *   This is valid only for AILIA_TOKENIZER_TYPE_ROBERTA and AILIA_TOKENIZER_TYPE_GPT2.
  */
 int AILIA_API
 ailiaTokenizerAddSpecialTokens(struct AILIATokenizer* net, const char **tokens, unsigned int count);
